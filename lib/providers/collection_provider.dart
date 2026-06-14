@@ -371,11 +371,12 @@ class CollectionProvider extends ChangeNotifier {
     final times = timeRange.split(' - ');
     int start = _timeToMinutes(times[0]);
     int end = _timeToMinutes(times[1]);
-    if (end <= start)
+    if (end <= start) {
       return [
         [start, 1440],
         [0, end],
       ];
+    }
     return [
       [start, end],
     ];

@@ -173,7 +173,9 @@ class SettingsScreen extends StatelessWidget {
                             );
                             settings.toggleShuffleMode(val);
                           },
-                          activeColor: wapperColors.accentcolor,
+                          activeTrackColor: wapperColors.accentcolor,
+                          activeThumbColor: Colors.white,
+                          inactiveThumbColor: Colors.white,
                         ),
                       ],
                     ),
@@ -214,7 +216,7 @@ class SettingsScreen extends StatelessWidget {
                       onPressed: _fixBackgroundAutomation,
                       icon: const Icon(Icons.auto_awesome, color: Colors.white),
                       label: Text(
-                        "Allow Background Magic ✨",
+                        "Allow Background Magic",
                         style: TextStyle(
                           fontSize: 14.sp,
                           fontWeight: FontWeight.bold,
@@ -234,67 +236,6 @@ class SettingsScreen extends StatelessWidget {
                 ),
               ),
             ),
-
-            SizedBox(height: 32.h),
-
-            // ── STORAGE ──────────────────────────────
-            const SectionHeader(title: "STORAGE"),
-            SizedBox(height: 12.h),
-            SettingsCard(
-              child: Padding(
-                padding: EdgeInsets.all(20.w),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Clear Saved Images",
-                            style: TextStyle(
-                              fontSize: 16.sp,
-                              fontWeight: FontWeight.bold,
-                              color: wapperColors.primarytextcolor,
-                            ),
-                          ),
-                          SizedBox(height: 4.h),
-                          Text(
-                            "Free up 150 MB of storage",
-                            style: TextStyle(
-                              fontSize: 13.sp,
-                              color: wapperColors.secondarytextcolor,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        debugPrint(
-                          '🚀 [SettingsUI] Clear Saved Images triggered',
-                        );
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Saved images cleared!'),
-                          ),
-                        );
-                      },
-                      style: TextButton.styleFrom(
-                        foregroundColor: wapperColors.accentcolor,
-                        textStyle: TextStyle(
-                          fontSize: 15.sp,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      child: const Text("Clear"),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-
-            SizedBox(height: 100.h),
           ],
         ),
       ),

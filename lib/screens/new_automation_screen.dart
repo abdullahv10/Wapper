@@ -29,20 +29,40 @@ class _NewAutomationScreenState extends State<NewAutomationScreen> {
   }
 
   Future<void> _selectTime(BuildContext context, bool isStart) async {
-    debugPrint('🚀 [NewAutomationScreen] Opening time picker for ${isStart ? "Start" : "End"} time');
+    debugPrint(
+      '🚀 [NewAutomationScreen] Opening time picker for ${isStart ? "Start" : "End"} time',
+    );
     final TimeOfDay? picked = await showTimePicker(
       context: context,
       initialTime: isStart ? startTime : endTime,
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          // We use copyWith to keep your app's default fonts,
+          // but we overwrite the colors with a generated blue scheme.
+          data: Theme.of(context).copyWith(
+            colorScheme: ColorScheme.fromSeed(
+              seedColor: Colors.blue,
+              // This ensures the picker matches if the user's phone is in Dark Mode
+              brightness: Theme.of(context).brightness,
+            ),
+          ),
+          child: child!,
+        );
+      },
     );
-    
+
     if (picked != null) {
       setState(() {
         if (isStart) {
           startTime = picked;
-          debugPrint('✅ [NewAutomationScreen] Start time updated to: ${_formatTime(picked)}');
+          debugPrint(
+            '✅ [NewAutomationScreen] Start time updated to: ${_formatTime(picked)}',
+          );
         } else {
           endTime = picked;
-          debugPrint('✅ [NewAutomationScreen] End time updated to: ${_formatTime(picked)}');
+          debugPrint(
+            '✅ [NewAutomationScreen] End time updated to: ${_formatTime(picked)}',
+          );
         }
       });
     }
@@ -53,12 +73,17 @@ class _NewAutomationScreenState extends State<NewAutomationScreen> {
     final wapperColors = Theme.of(context).extension<WapperColors>()!;
 
     if (selectedCollectionId == null) {
-      debugPrint('🛑 [NewAutomationScreen] Save failed: No collection selected.');
+      debugPrint(
+        '🛑 [NewAutomationScreen] Save failed: No collection selected.',
+      );
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            'Please select a collection first!', 
-            style: TextStyle(color: wapperColors.primarytextcolor, fontWeight: FontWeight.w500)
+            'Please select a collection first!',
+            style: TextStyle(
+              color: wapperColors.primarytextcolor,
+              fontWeight: FontWeight.w500,
+            ),
           ),
           backgroundColor: wapperColors.rederror,
         ),
@@ -67,37 +92,54 @@ class _NewAutomationScreenState extends State<NewAutomationScreen> {
     }
 
     final timeRange = '${_formatTime(startTime)} - ${_formatTime(endTime)}';
-    debugPrint('👀 [NewAutomationScreen] Attempting to save rule: ID $selectedCollectionId at $timeRange');
-    
-    final errorMessage = await context.read<CollectionProvider>().tryAddRule(selectedCollectionId!, timeRange);
-    
+    debugPrint(
+      '👀 [NewAutomationScreen] Attempting to save rule: ID $selectedCollectionId at $timeRange',
+    );
+
+    final errorMessage = await context.read<CollectionProvider>().tryAddRule(
+      selectedCollectionId!,
+      timeRange,
+    );
+
     if (!mounted) return;
 
     if (errorMessage != null) {
-      debugPrint('🛑 [NewAutomationScreen] Rule rejected by provider: $errorMessage');
+      debugPrint(
+        '🛑 [NewAutomationScreen] Rule rejected by provider: $errorMessage',
+      );
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(errorMessage, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500)),
+          content: Text(
+            errorMessage,
+            style: const TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
           backgroundColor: wapperColors.rederror,
         ),
       );
-      return; 
+      return;
     }
 
-    debugPrint('✅ [NewAutomationScreen] Rule successfully saved. Popping screen.');
-    Navigator.pop(context); 
+    debugPrint(
+      '✅ [NewAutomationScreen] Rule successfully saved. Popping screen.',
+    );
+    Navigator.pop(context);
   }
 
   @override
   Widget build(BuildContext context) {
     final providerData = context.watch<CollectionProvider>();
     final wapperColors = Theme.of(context).extension<WapperColors>()!;
-    
+
     final missingGaps = providerData.getMissingTimeGaps();
 
     return Scaffold(
       backgroundColor: wapperColors.backgroundColor,
-      appBar: const TertiaryAppBar(title: "Automation"), // Updated to match fixed file name
+      appBar: const TertiaryAppBar(
+        title: "Automation",
+      ), // Updated to match fixed file name
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -109,10 +151,17 @@ class _NewAutomationScreenState extends State<NewAutomationScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(height: 10.h),
-                    
+
                     MissingGapsTip(missingGaps: missingGaps),
 
-                    Text("Time Range", style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold, color: wapperColors.primarytextcolor)),
+                    Text(
+                      "Time Range",
+                      style: TextStyle(
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.bold,
+                        color: wapperColors.primarytextcolor,
+                      ),
+                    ),
                     SizedBox(height: 16.h),
                     Row(
                       children: [
@@ -121,7 +170,7 @@ class _NewAutomationScreenState extends State<NewAutomationScreen> {
                             label: "Start",
                             formattedTime: _formatTime(startTime),
                             onTap: () => _selectTime(context, true),
-                          )
+                          ),
                         ),
                         SizedBox(width: 16.w),
                         Expanded(
@@ -129,19 +178,28 @@ class _NewAutomationScreenState extends State<NewAutomationScreen> {
                             label: "End",
                             formattedTime: _formatTime(endTime),
                             onTap: () => _selectTime(context, false),
-                          )
+                          ),
                         ),
                       ],
                     ),
-                    
+
                     SizedBox(height: 32.h),
-                    Text("Select Collection", style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold, color: wapperColors.primarytextcolor)),
+                    Text(
+                      "Select Collection",
+                      style: TextStyle(
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.bold,
+                        color: wapperColors.primarytextcolor,
+                      ),
+                    ),
                     SizedBox(height: 16.h),
-                    
+
                     ...providerData.collections.map((collection) {
-                      final isSelected = selectedCollectionId == collection['id'];
-                      final scheduledTime = providerData.getScheduledTimeForCollection(collection['id']);
-                      final isUsed = scheduledTime != null; 
+                      final isSelected =
+                          selectedCollectionId == collection['id'];
+                      final scheduledTime = providerData
+                          .getScheduledTimeForCollection(collection['id']);
+                      final isUsed = scheduledTime != null;
 
                       return CollectionSelectionCard(
                         collection: collection,
@@ -149,14 +207,16 @@ class _NewAutomationScreenState extends State<NewAutomationScreen> {
                         isUsed: isUsed,
                         scheduledTime: scheduledTime,
                         onTap: () {
-                          debugPrint('🚀 [NewAutomationScreen] Collection tapped: ${collection['title']}');
+                          debugPrint(
+                            '🚀 [NewAutomationScreen] Collection tapped: ${collection['title']}',
+                          );
                           setState(() {
                             selectedCollectionId = collection['id'];
                           });
                         },
                       );
                     }),
-                    
+
                     SizedBox(height: 100.h),
                   ],
                 ),
@@ -174,10 +234,19 @@ class _NewAutomationScreenState extends State<NewAutomationScreen> {
           child: ElevatedButton.icon(
             onPressed: _saveAutomation,
             icon: const Icon(Icons.save_outlined, color: Colors.white),
-            label: Text("Save Automation", style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold, color: Colors.white)),
+            label: Text(
+              "Save Automation",
+              style: TextStyle(
+                fontSize: 16.sp,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
             style: ElevatedButton.styleFrom(
               backgroundColor: wapperColors.accentcolor ?? Colors.blue,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16.r),
+              ),
               elevation: 4,
             ),
           ),
